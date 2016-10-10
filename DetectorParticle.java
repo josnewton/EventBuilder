@@ -133,12 +133,12 @@ public class DetectorParticle {
      public double ParametrizedSF() {
                 double sf = 0.0;
                 double p = this.vector().mag();
-                if(this.vector().mag()<=3){
-                    sf = -0.0035*pow(p,4) + 0.0271*pow(p,3) - 0.077*pow(p,2) + 0.0985*pow(p,1) + 0.2241;
+                if(this.vector().mag()<=2.5){
+                    sf = 0.0044*pow(p,5) - 0.0357*pow(p,4) + 0.1142*pow(p,3) - 0.1826*pow(p,2) + 0.1532*pow(p,1) + 0.2145;
                 }
                 
-                if(this.vector().mag()>3){
-                    sf = 0.0004*p + 0.2738;
+                if(this.vector().mag()>2.5){
+                    sf = 0.0004*p + 0.2735;
                 }
                 return sf;
             }
