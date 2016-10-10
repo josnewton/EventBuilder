@@ -20,7 +20,7 @@ import static java.lang.Math.abs;
 public class EBTrigger {
         
        public static void GetFinalTriggerInformation(DetectorEvent event)   {
-           DetectorParticle BestTrigger = new DetectorParticle();
+
            for(int i = 0 ; i < event.getParticles().size() ; i++) {
                TIDResult result = new TIDResult();
                result = TriggerAssignment.GetShoweringParticleEvidence(event.getParticles().get(i));
