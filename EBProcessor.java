@@ -18,9 +18,9 @@ import org.jlab.detector.base.DetectorType;
  */
 public class EBProcessor {
     
-    List<org.jlab.clas.ebuilder.DetectorParticle>      particles = new ArrayList<org.jlab.clas.ebuilder.DetectorParticle>();
-    List<org.jlab.clas.detector.DetectorResponse>  responsesFTOF = new ArrayList<org.jlab.clas.detector.DetectorResponse>();
-    List<org.jlab.clas.detector.DetectorResponse>  responsesECAL = new ArrayList<org.jlab.clas.detector.DetectorResponse>();
+    List<DetectorParticle>      particles = new ArrayList<DetectorParticle>();
+    List<DetectorResponse>  responsesFTOF = new ArrayList<DetectorResponse>();
+    List<DetectorResponse>  responsesECAL = new ArrayList<DetectorResponse>();
     List<CherenkovSignal>  signalsHTCC = new ArrayList<CherenkovSignal>();
 
     
@@ -28,15 +28,15 @@ public class EBProcessor {
         
     }
     
-    public EBProcessor(List<org.jlab.clas.ebuilder.DetectorParticle> list){
+    public EBProcessor(List<DetectorParticle> list){
         particles.addAll(list);
     }
     
-    public void addTOF(List<org.jlab.clas.detector.DetectorResponse> det_ftof){
+    public void addTOF(List<DetectorResponse> det_ftof){
         responsesFTOF.addAll(det_ftof);
     }
     
-    public void addECAL(List<org.jlab.clas.detector.DetectorResponse> det_ecal){
+    public void addECAL(List<DetectorResponse> det_ecal){
         responsesECAL.addAll(det_ecal);
     }
     
@@ -51,15 +51,15 @@ public class EBProcessor {
             resp.setAssociation(-1);
         }
         
-        List<org.jlab.clas.detector.DetectorResponse>  pcal = org.jlab.clas.detector.DetectorResponse.getListByLayer(responsesECAL, DetectorType.EC, 1);
+        List<DetectorResponse>  pcal = DetectorResponse.getListByLayer(responsesECAL, DetectorType.EC, 1);
       // System.out.println(" PCAL HITS SIZE = " + pcal.size());
         int iparticle = 0;
-        for(org.jlab.clas.ebuilder.DetectorParticle p : particles){ 
+        for(DetectorParticle p : particles){ 
             //System.out.println(p.vector().mag());
             int index = p.getDetectorHit(pcal,DetectorType.EC,1,15.0);
             if(index>=0){
                 //System.out.println("Getdetectorhit works!!!");
-                org.jlab.clas.detector.DetectorResponse response = pcal.get(index);
+                DetectorResponse response = pcal.get(index);
                 response.setAssociation(iparticle);
                 p.addResponse(response);
             }
@@ -67,27 +67,27 @@ public class EBProcessor {
         }
         
         
-        List<org.jlab.clas.detector.DetectorResponse>  ecin = org.jlab.clas.detector.DetectorResponse.getListByLayer(responsesECAL, DetectorType.EC, 4);
+        List<DetectorResponse>  ecin = DetectorResponse.getListByLayer(responsesECAL, DetectorType.EC, 4);
        // System.out.println(" ECIN COUNTER = " + ecin.size());
         iparticle = 0;
-        for(org.jlab.clas.ebuilder.DetectorParticle p : particles){            
+        for(DetectorParticle p : particles){            
             int index = p.getDetectorHit(ecin,DetectorType.EC,4,10.0);
             //System.out.println(index);
             if(index>=0){
-                org.jlab.clas.detector.DetectorResponse response = ecin.get(index);
+                DetectorResponse response = ecin.get(index);
                 response.setAssociation(iparticle);
                 p.addResponse(response);
             }
             iparticle++;
         }
         
-        List<org.jlab.clas.detector.DetectorResponse>  ecout = org.jlab.clas.detector.DetectorResponse.getListByLayer(responsesECAL, DetectorType.EC, 7);
+        List<DetectorResponse>  ecout = DetectorResponse.getListByLayer(responsesECAL, DetectorType.EC, 7);
         //System.out.println(" ECOUT COUNTER = " + ecout.size());
         iparticle = 0;
-        for(org.jlab.clas.ebuilder.DetectorParticle p : particles){            
+        for(DetectorParticle p : particles){            
             int index = p.getDetectorHit(ecout,DetectorType.EC,7,10.0);
             if(index>=0){
-                org.jlab.clas.detector.DetectorResponse response = ecout.get(index);
+                DetectorResponse response = ecout.get(index);
                 response.setAssociation(iparticle);
                 p.addResponse(response);
             }
@@ -96,16 +96,16 @@ public class EBProcessor {
     }
     
     
-    public List<org.jlab.clas.ebuilder.DetectorParticle>  getParticles(){return this.particles;}
+    public List<DetectorParticle>  getParticles(){return this.particles;}
     
     
     public void matchNeutral(){
-        List<org.jlab.clas.detector.DetectorResponse>  pcal  = org.jlab.clas.detector.DetectorResponse.getListByLayer(responsesECAL, DetectorType.EC, 1);
-        List<org.jlab.clas.ebuilder.DetectorParticle>  gamma = new ArrayList<org.jlab.clas.ebuilder.DetectorParticle>();
+        List<DetectorResponse>  pcal  = DetectorResponse.getListByLayer(responsesECAL, DetectorType.EC, 1);
+        List<DetectorParticle>  gamma = new ArrayList<DetectorParticle>();
         
         for(int i = 0; i < pcal.size(); i++){
             if(pcal.get(i).getAssociation()<0){
-                org.jlab.clas.ebuilder.DetectorParticle  p = new org.jlab.clas.ebuilder.DetectorParticle();
+                DetectorParticle  p = new DetectorParticle();
                 Vector3  u = new Vector3(pcal.get(i).getPosition().x(),
                         pcal.get(i).getPosition().y(),pcal.get(i).getPosition().z());
                 u.unit();
@@ -117,12 +117,12 @@ public class EBProcessor {
                 
             }
         }
-        List<org.jlab.clas.detector.DetectorResponse>  ecin  = org.jlab.clas.detector.DetectorResponse.getListByLayer(responsesECAL, DetectorType.EC, 4);
-        List<org.jlab.clas.detector.DetectorResponse>  ecout = org.jlab.clas.detector.DetectorResponse.getListByLayer(responsesECAL, DetectorType.EC, 7);
+        List<DetectorResponse>  ecin  = DetectorResponse.getListByLayer(responsesECAL, DetectorType.EC, 4);
+        List<DetectorResponse>  ecout = DetectorResponse.getListByLayer(responsesECAL, DetectorType.EC, 7);
         
         int nparticles = this.particles.size();
         int iparticle  = 0;
-        for(org.jlab.clas.ebuilder.DetectorParticle p : gamma){
+        for(DetectorParticle p : gamma){
             int index = p.getDetectorHit(ecin,DetectorType.EC,4,10.0);
            // System.out.println(index);
             if(index>=0){
@@ -157,16 +157,16 @@ public class EBProcessor {
     
     public void matchTimeOfFlight(){
         
-        for(org.jlab.clas.detector.DetectorResponse resp : responsesFTOF){
+        for(DetectorResponse resp : responsesFTOF){
             resp.setAssociation(-1);
         }
         
         int iparticle = 0;
-        for(org.jlab.clas.ebuilder.DetectorParticle p : particles){            
+        for(DetectorParticle p : particles){            
             int index = p.getDetectorHit(responsesFTOF,DetectorType.FTOF,2,15.0);
            // System.out.println(index);
             if(index>=0){
-                org.jlab.clas.detector.DetectorResponse response = responsesFTOF.get(index);
+                DetectorResponse response = responsesFTOF.get(index);
                 response.setAssociation(iparticle);
                 p.addResponse(response);
                 p.setBeta(p.getBeta(DetectorType.FTOF));
@@ -184,7 +184,7 @@ public class EBProcessor {
             che.setAssociation(-1);
         }
       
-       for(org.jlab.clas.ebuilder.DetectorParticle p : particles){
+       for(DetectorParticle p : particles){
        int bestCandidate = p.getCherenkovSignal(signalsHTCC, "htcc", 0.1);
        //System.out.println(bestCandidate);
        if(bestCandidate>=0) {
@@ -204,7 +204,7 @@ public class EBProcessor {
     public void show(){
         System.out.println("------->  SHOW Event BUILDER Results <------");
         System.out.println(" ECAL HITS = " + responsesECAL.size());
-        for(org.jlab.clas.ebuilder.DetectorParticle p : particles){
+        for(etectorParticle p : particles){
             System.out.println(p);
         }
     }
