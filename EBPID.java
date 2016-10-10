@@ -20,7 +20,7 @@ import static java.lang.Math.abs;
 
 /**
  *
- * @author gavalian
+ * @author Joseph Newton
  */
 public class EBPID {
     
