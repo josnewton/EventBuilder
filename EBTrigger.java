@@ -51,7 +51,7 @@ public class EBTrigger {
      
     public static void CalcBeta2(DetectorParticle p, DetectorEvent e){
         if(p.hasHit(DetectorType.FTOF, 2)==true){
-            org.jlab.clas.detector.DetectorResponse res = p.getHit(DetectorType.FTOF, 2);
+            DetectorResponse res = p.getHit(DetectorType.FTOF, 2);
             double path = res.getPath();
             double time = res.getTime();
             double beta = path/(time-e.getEventTrigger().getStartTime())/29.9792;
