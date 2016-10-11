@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.jlab.clas.ebuilder;
+package org.jlab.clas.detector;
 
 import org.jlab.clas.physics.Vector3;
 import org.jlab.detector.base.DetectorDescriptor;
