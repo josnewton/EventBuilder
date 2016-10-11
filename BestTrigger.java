@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 /**                                                                                                                                                            
  *                                                                                                                                                             
- * @author gavalian                                                                                                                                            
+ * @author jnewton                                                                                                                                           
  */
 public interface BestTrigger {
    
