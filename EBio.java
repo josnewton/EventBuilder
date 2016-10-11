@@ -124,8 +124,8 @@ public class EBio {
         return bank;
     }
     
-    public static List<org.jlab.clas.detector.DetectorResponse> readECAL(DataEvent event){
-        List<org.jlab.clas.detector.DetectorResponse> ecal = new ArrayList<org.jlab.clas.detector.DetectorResponse>();
+    public static List<DetectorResponse> readECAL(DataEvent event){
+        List<DetectorResponse> ecal = new ArrayList<DetectorResponse>();
         if(event.hasBank("ECDetector::clusters")==true){
             EvioDataBank bank = (EvioDataBank) event.getBank("ECDetector::clusters");
             int nrows = bank.rows();
@@ -135,17 +135,17 @@ public class EBio {
                 int layer   = bank.getInt("layer", i);
                // System.out.println("Sector = " + bank.getInt("sector",i));
               //  System.out.println("Layer = " + bank.getInt("layer",i));
-                org.jlab.clas.detector.DetectorResponse resp = new org.jlab.clas.detector.DetectorResponse();
+                DetectorResponse resp = new DetectorResponse();
                 resp.getDescriptor().setType(DetectorType.EC);
                 resp.getDescriptor().setSectorLayerComponent(sector, layer, 0);
                 resp.setPosition(
-                            bank.getDouble("X", i),bank.getDouble("Y", i),
-                            bank.getDouble("Z", i)
+                            bank.getFloat("X", i),bank.getFloat("Y", i),
+                            bank.getFloat("Z", i)
                     );
                 //System.out.println(bank.getDouble("X",i));
    
                     resp.setTime(bank.getFloat("time", i));
-                    resp.setEnergy(bank.getDouble("energy", i));
+                    resp.setEnergy(bank.getFloat("energy", i));
                  //   System.out.println(bank.getDouble("energy",i));
                     ecal.add(resp);
             }
@@ -155,8 +155,8 @@ public class EBio {
         return ecal;
     }
     
-    public static List<org.jlab.clas.detector.DetectorResponse>  readFTOF(DataEvent event){
-        List<org.jlab.clas.detector.DetectorResponse> ftof = new ArrayList<org.jlab.clas.detector.DetectorResponse>();
+    public static List<DetectorResponse>  readFTOF(DataEvent event){
+        List<DetectorResponse> ftof = new ArrayList<DetectorResponse>();
         if(event.hasBank("FTOFRec::ftofhits")==true){
             EvioDataBank bank = (EvioDataBank) event.getBank("FTOFRec::ftofhits");
             int nrows = bank.rows();
@@ -165,7 +165,7 @@ public class EBio {
                 int layer   = bank.getInt("panel_id", i);
                 int paddle  = bank.getInt("paddle_id", i);
                 if(layer==2||layer==3){
-                    org.jlab.clas.detector.DetectorResponse resp = new org.jlab.clas.detector.DetectorResponse();
+                    DetectorResponse resp = new DetectorResponse();
                     resp.getDescriptor().setType(DetectorType.FTOF);
                     resp.getDescriptor().setSectorLayerComponent(sector, layer, paddle);
                     resp.setPosition(
