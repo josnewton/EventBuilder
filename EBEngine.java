@@ -68,13 +68,10 @@ public class EBEngine extends ReconstructionEngine {
         EBTrigger.GetFinalTriggerInformation(detectorEvent); //Identifies Trigger Particle and Start Time
         EBTrigger.CalcBeta(detectorEvent);//Calculates Speed of Each Track
         
-       // System.out.println("Start Time = " + detectorEvent.getEventTrigger().getStartTime());
-       // System.out.println("Trigger's HTCC nphe = " + detectorEvent.getEventTrigger().getTriggerParticle().getNphe("htcc"));
-        System.out.println("Trigger's samping fraction = " + detectorEvent.getEventTrigger().getTriggerParticle().CalculatedSF());
-   //   System.out.println("FTOF time = " + detectorEvent.getEventTrigger().getTriggerParticle().getTime(DetectorType.FTOF));
-//        if(EBio.isTimeBased(de)==true){
-//           EBPID.doTimeBasedPID(detectorEvent);
-//        }
+
+        if(EBio.isTimeBased(de)==true){
+           EBPID.doTimeBasedPID(detectorEvent);
+        }
         
         /*
         if(de.hasBank("RUN::config")==true){
