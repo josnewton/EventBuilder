@@ -12,15 +12,9 @@ import org.jlab.detector.base.DetectorType;
 import org.jlab.geom.prim.Point3D;
 import static java.lang.Math.abs;
 
-
-
-
-
-
-
 /**
  *
- * @author Joseph Newton
+ * @author jnewton
  */
 public class EBPID {
     
