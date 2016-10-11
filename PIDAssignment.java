@@ -15,7 +15,7 @@ import org.jlab.detector.base.DetectorType;
 
 /**
  *
- * @author Joseph Newton
+ * @author jnewton
  */
 public class PIDAssignment {
 
