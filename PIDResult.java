@@ -1,11 +1,11 @@
-package org.jlab.clas.ebuilder;
+package org.jlab.service.eb;
 
 
 
 
 /**
  *
- * @author Joseph Newton
+ * @author jnewton
  */
 public class PIDResult {
     
