@@ -1,4 +1,4 @@
-package org.jlab.clas.ebuilder;
+package org.jlab.service.eb;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import org.jlab.clas.detector.DetectorEvent;
 
 /**
  *
- * @author gavalian
+ * @author jnewton
  */
 public class TIDResult {
     
