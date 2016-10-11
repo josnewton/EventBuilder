@@ -29,25 +29,21 @@ public class EBPID {
                 TBElectron electron = new TBElectron();
                 if(abs(electron.getPIDResult(event.getParticles().get(i)).getFinalID())==11){
                     event.getParticles().get(i).setPIDResult(electron.getPIDResult(event.getParticles().get(i)));
-                    break;
                 }
                 
                 TBPion pion = new TBPion();
                 if(abs(pion.getPIDResult(event.getParticles().get(i)).getFinalID())==211){
                     event.getParticles().get(i).setPIDResult(pion.getPIDResult(event.getParticles().get(i)));
-                    break;
                 }
                 
                 TBKaon kaon = new TBKaon();
                 if(abs(kaon.getPIDResult(event.getParticles().get(i)).getFinalID())==321){
                     event.getParticles().get(i).setPIDResult(kaon.getPIDResult(event.getParticles().get(i)));
-                    break;
                 }
                 
                 TBProton proton = new TBProton();
                 if(abs(proton.getPIDResult(event.getParticles().get(i)).getFinalID())==2212){
                     event.getParticles().get(i).setPIDResult(proton.getPIDResult(event.getParticles().get(i)));
-                    break;
                 }
                 
             }
