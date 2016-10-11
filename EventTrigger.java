@@ -1,4 +1,4 @@
-package org.jlab.clas.ebuilder;
+package org.jlab.clas.detector;
 
 import java.util.ArrayList;
 import java.util.List;
