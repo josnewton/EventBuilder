@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 /**
  *
- * @author Joseph Newton
+ * @author jnewton
  */
 public class PIDExamination {
     
