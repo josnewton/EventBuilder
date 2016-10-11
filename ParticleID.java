@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates                                                                                                      
  * and open the template in the editor.                                                                                                                        
  */
-package org.jlab.clas.ebuilder;
+package org.jlab.service.eb;
 
 
 
 /**                                                                                                                                                            
  *                                                                                                                                                             
- * @author gavalian                                                                                                                                            
+ * @author jnewton                                                                                                                                            
  */
 public interface ParticleID {
    
