@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.jlab.clas.ebuilder;
+package org.jlab.service.eb;
 
 import org.jlab.detector.base.DetectorType;
 
@@ -13,7 +13,7 @@ import org.jlab.detector.base.DetectorType;
 
 /**
  *
- * @author Joseph Newton
+ * @author jnewton
  */
 public class TriggerAssignment {
 
