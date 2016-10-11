@@ -1,5 +1,8 @@
 package org.jlab.clas.ebuilder;
 
+import static java.lang.Math.abs;
+import java.util.HashMap;
+
 
 
 
@@ -77,7 +80,88 @@ public class PIDExamination {
         return truth;
     }
 
+    public Boolean SamplingFractionCheck(DetectorParticle particle){ //Checks if particle falls within electron sampling fraction
+        double p =  particle.vector().mag();
+        Boolean check = false;
+        double sf_calc =  particle.CalculatedSF();
+        double sf_expect =  particle.ParametrizedSF();
+        double sf_sigma = particle.ParametrizedSigma();
+        if(sf_calc<=(sf_expect+5*sf_sigma) && sf_calc>=(sf_expect-5*sf_sigma) && p!=0.0){ //Is the calculated sampling fraction within 5 sigma
+              check = true;
+              }
+           return check;
+        }
 
+    public Boolean HTCCSignal(DetectorParticle particle) {
+        String str = "htcc";
+        Boolean truth = false;
+        if(particle.getNphe(str)>0){
+            truth = true;
+        }
+        return truth;
+    }
+    
+    public Boolean LTCCSignal(DetectorParticle particle) {
+        String str = "ltcc";
+        Boolean truth = false;
+        if(particle.getNphe(str)>0){
+            truth = true;
+        }
+        return truth;
+    }
+    
+    public Boolean HTCCThreshold(DetectorParticle particle) {
+        Boolean truth = false;
+        if(particle.vector().mag()>4.9){
+            truth = true;
+        }
+         return truth;
+    }
+    
+   public Boolean LTCCThreshold(DetectorParticle particle) {
+        Boolean truth = false;
+        if(particle.vector().mag()>3 && particle.vector().mag()<5){
+            truth = true;
+        }
+         return truth;
+    }
+    
+    public Boolean GetBeta(DetectorParticle particle , int pid){
+            Boolean truth = false;
+            HashMap<Integer,Double> dBetas= new HashMap<Integer,Double>();
+            dBetas.put(0,abs(particle.getTheoryBeta(11) - particle.getBeta()));
+            dBetas.put(1,abs(particle.getTheoryBeta(2212) - particle.getBeta()));
+            dBetas.put(2,abs(particle.getTheoryBeta(211) - particle.getBeta()));
+            dBetas.put(3,abs(particle.getTheoryBeta(321) - particle.getBeta()));
+            double min = dBetas.get(0);
+            int index = 0,id=0;
+            for (int i = 0; i <= 3; i++) {
+             //   System.out.println(dBetas.get(i));
+                if (dBetas.get(i) < min) {
+                min = dBetas.get(i);
+                index = i;
+                }
+            }
+            if(index==0){
+                id=11;
+            }
+            if(index==1){
+                id=2212;
+            }
+            if(index==2){
+                id=211;
+            }
+            if(index==3){
+                id=321;
+            }
+            if(id==pid){
+                truth = true;
+            }
+            return truth;
+    }
+
+  
+    
     public Integer getCandidateID(){return this.CandidateID;}
     public Boolean getClosestBeta(){return this.closestBeta;}
     public Boolean getHTCC(){ return this.hasHTCC; }
