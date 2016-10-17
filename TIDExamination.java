@@ -1,11 +1,11 @@
-package org.jlab.service.eb;
+package org.jlab.clas.ebuilder;
 
 
 
 
 /**
  *
- * @author jnewton
+ * @author Joseph Newton
  */
 public class TIDExamination {
     
@@ -47,7 +47,31 @@ public class TIDExamination {
         }
         return score;
     }
-       
+     
+    
+    public Boolean SamplingFractionCheck(DetectorParticle particle){ //Checks if particle falls within electron sampling fraction
+        double p =  particle.vector().mag();
+        Boolean check = false;
+        double sf_calc =  particle.CalculatedSF();
+        double sf_expect =  particle.ParametrizedSF();
+        double sf_sigma = particle.ParametrizedSigma();
+         //     System.out.println("Sampling Fraction = " + sf_calc);
+        if(sf_calc<=(sf_expect+5*sf_sigma) && sf_calc>=(sf_expect-5*sf_sigma) && p!=0.0){ //Is the calculated sampling fraction within 5 sigma
+              check = true;
+              }
+           return check;
+        }
+
+
+    
+    public Boolean HTCCSignal(DetectorParticle particle){
+        String str = "htcc";
+        Boolean truth = false;
+        if(particle.getNphe(str)>0){
+            truth = true;
+        }
+        return truth;
+    }
 
     public Integer getCandidateID(){return this.CandidateID;}
     public Boolean getHTCC(){ return this.hasHTCC; }
