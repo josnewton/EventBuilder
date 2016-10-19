@@ -37,6 +37,7 @@ public class DetectorParticle {
     private Integer particleCharge  = 0;
     private Integer particlePID     = 0;
     private Integer particleStatus  = 1;
+    private Integer particleScore   = 0;
     private Double  particleBeta    = 0.0;
     private Double  particleMass    = 0.0;
     private Double  particlePath    = 0.0;
@@ -50,7 +51,7 @@ public class DetectorParticle {
     
     private TreeMap<DetectorType,TrackIntersect>  projectedHit = new  TreeMap<DetectorType,TrackIntersect>();
     
-    private TIDResult tidresult = new TIDResult(); 
+
     private PIDResult pidresult = new PIDResult();
     
     
@@ -282,31 +283,7 @@ public class DetectorParticle {
         return response.getTime();
     }
     
-   public double StartTime(int usertriggerid){
-            double t_0r = 0;
 
-            if(this.hasHit(DetectorType.FTOF, 2)==true){
-            double beta = 0.0;
-            if(abs(usertriggerid)==11){
-                beta = 1;//We assign electron beta if at least one track has responses in FTOF/HTCC
-            }
-            if(abs(usertriggerid)==211){
-                beta = this.getTheoryBeta(211); //We Assign Pion mass to the fastest negative track
-            }
-            if(abs(usertriggerid)==22){
-                beta = this.getTheoryBeta(22);
-            }
-
-            double t_0 = 0,deltatr = 0, t_rf = 0, z_0 = 0, m = 1000000;
-            t_0r = this.getTime(DetectorType.FTOF) - (this.getPathLength(DetectorType.FTOF))/(beta*29.9792);
-            deltatr = t_0r - t_rf - (this.vertex().z() - z_0)/beta + m*2.0004;
-            t_0 = deltatr%2.0004 - 2.0004/2;
-
-            }
-   
-      
-            return t_0r;
-        }
     
     public double getEnergy(DetectorType type){
         double energy = 0.0;
@@ -370,12 +347,12 @@ public class DetectorParticle {
         this.particleCrossDirection.setXYZ(ux, uy, uz);
     }
     
-    public void setTIDResult(TIDResult result){
-        this.tidresult = result;
+    public void setScore(int sc){
+        this.particleScore = sc;
     }
     
-    public TIDResult getTIDResult(){
-        return this.tidresult;
+    public int getScore(){
+        return this.particleScore;
     }
     
     public void setPIDResult(PIDResult result){
