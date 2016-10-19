@@ -16,7 +16,6 @@ import org.jlab.clas.detector.DetectorEvent;
  */
 public class TIDResult {
     
-   private int finalid;
    private int score;
    private TIDExamination tidexam = new TIDExamination();
 
@@ -26,13 +25,11 @@ public class TIDResult {
         
     }
     
-    public void   setFinalID(int id){ this.finalid = id;}
     public void   setTIDExamination(TIDExamination exam){this.tidexam = exam;}
     public void   setScore(int x ){this.score = x;} 
 
     
     public int getScore(){return this.score;}
-    public int getFinalID(){ return this.finalid;}
     public TIDExamination getTIDExamination(){return this.tidexam;}
 
     
