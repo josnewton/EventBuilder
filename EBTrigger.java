@@ -15,7 +15,7 @@ import static java.lang.Math.abs;
 
 /**
  *
- * @author jnewt018
+ * @author jnewton
  */
 public class EBTrigger {
         
