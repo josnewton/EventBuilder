@@ -86,61 +86,7 @@ public class DetectorEvent {
     public void   setEventTrigger(EventTrigger trig){this.trigger = trig;}
     
     public EventTrigger getEventTrigger(){return this.trigger;}
-   
-    public HashMap<Integer,DetectorParticle> ObtainTriggerCandidates(int particleid)  {
-        HashMap<Integer,DetectorParticle> map = new HashMap<Integer,DetectorParticle>();
-        if(particleid==11){
-            int mapiteration = 0;
-            for(int i = 0 ; i < this.particleList.size() ; i++){
-                if(this.particleList.get(i).getTIDResult().getTIDExamination().getHTCC()==true && 
-                        this.particleList.get(i).getTIDResult().getTIDExamination().getFTOF()==true
-                        && this.particleList.get(i).getCharge()==-1){
-                    map.put(mapiteration,this.particleList.get(i));
-                    mapiteration = mapiteration + 1;
-                }
-            }
-        }
-        if(particleid==-11){
-            int mapiteration = 0;
-            for(int i = 0 ; i < this.particleList.size() ; i++){
-                if(this.particleList.get(i).getTIDResult().getTIDExamination().getHTCC()==true &&
-                        this.particleList.get(i).getTIDResult().getTIDExamination().getFTOF()==true 
-                        && this.particleList.get(i).getCharge()==1){
-                    map.put(mapiteration,this.particleList.get(i));
-                    mapiteration = mapiteration + 1;
-                }
-            }
-        }
-        if(particleid==211 || particleid==2212 || particleid==321){
-            int mapiteration = 0;
-            for(int i = 0 ; i < this.particleList.size() ; i++){
-                if(this.particleList.get(i).getCharge()==1){
-                    map.put(mapiteration,this.particleList.get(i));
-                    mapiteration = mapiteration + 1;
-                }
-            }
-        }
-        if(particleid==-211 || particleid==-2212 || particleid==-321){
-            int mapiteration = 0;
-            for(int i = 0 ; i < this.particleList.size() ; i++){
-                if(this.particleList.get(i).getCharge()==-1){
-                    map.put(mapiteration,this.particleList.get(i));
-                    mapiteration = mapiteration + 1;
-                }
-            }
-        }
-        if(particleid==22){
-             int mapiteration = 0;
-            for(int i = 0 ; i < this.particleList.size() ; i++){
-                if(this.particleList.get(i).getCharge()==0 && this.particleList.get(i).getTIDResult().getTIDExamination().getCorrectSF()==true){
-                    map.put(mapiteration,this.particleList.get(i));
-                    mapiteration = mapiteration + 1;
-                }
-            }           
-        }
-        return map;
-    }        
-    
+
 
     
     public boolean hasElectron(){
@@ -181,3 +127,4 @@ public class DetectorEvent {
 
 
 }
+
