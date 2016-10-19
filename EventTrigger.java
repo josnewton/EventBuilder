@@ -15,7 +15,7 @@ import org.jlab.detector.base.DetectorType;
 
 /**
  *
- * @author gavalian
+ * @author jnewton
  */
 public class EventTrigger {
     
