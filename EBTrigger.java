@@ -57,7 +57,7 @@ public class EBTrigger {
             org.jlab.clas.detector.DetectorResponse res = p.getHit(DetectorType.FTOF, 2);
             double path = res.getPath();
             double time = res.getTime();
-            double beta = path/(time-e.getEventTrigger().getStartTime())/29.9792;
+            double beta = path/(time-e.getEventTrigger().getStartTime())/29.9792; //betas that will be sent to time-based tracking
           //double beta = path/time/29.9792;
           //  System.out.println(e.getEventTrigger().getStartTime());
             p.setBeta(beta);
@@ -82,7 +82,7 @@ public class EBTrigger {
         TIDExamination TID = new TIDExamination(); //This is the "DetectorParticle"s PID properties.
         TID.setCorrectSF(TID.SamplingFractionCheck(particle)); //Is the sampling fraction within +-5 Sigma?
         TID.setHTCC(TID.HTCCSignal(particle)); //Is there a signal in HTCC?
-        TID.setFTOF(particle.hasHit(DetectorType.FTOF, 2));
+        TID.setFTOF(particle.hasHit(DetectorType.FTOF, 2));//Is there a hit in FTOF1B?
                
         TIDResult Result = new TIDResult();
         Result.setScore(TID.getTriggerScore());//Trigger Score for Electron/Positron
@@ -98,7 +98,7 @@ public class EBTrigger {
 
 class TriggerElectron implements BestTrigger {
     
-    public void CollectBestTriggerInfo(DetectorEvent event){
+    public void CollectBestTriggerInfo(DetectorEvent event){ //Obtain trigger information with electron
                    EventTrigger Trigger = new EventTrigger();
                    Trigger = event.getEventTrigger();
                    DetectorParticle BestTrigger = Trigger.GetBestTriggerParticle(Trigger.getElectronCandidates());
@@ -111,7 +111,7 @@ class TriggerElectron implements BestTrigger {
 
 class TriggerPositron implements BestTrigger {
     
-    public void CollectBestTriggerInfo(DetectorEvent event){
+    public void CollectBestTriggerInfo(DetectorEvent event){ //Obtain trigger information with positron
                    EventTrigger Trigger = new EventTrigger();
                    Trigger = event.getEventTrigger();
                    DetectorParticle BestTrigger = Trigger.GetBestTriggerParticle(Trigger.getPositronCandidates());
@@ -124,7 +124,7 @@ class TriggerPositron implements BestTrigger {
 
 
 
-class ElectronTriggerList implements TriggerCandidateList {
+class ElectronTriggerList implements TriggerCandidateList {//Compiles a map of DetectorParticles, which could possibly be electrons 
     public HashMap<Integer,DetectorParticle>  getCandidates(DetectorEvent event) {
         HashMap<Integer,DetectorParticle> map = new HashMap<Integer,DetectorParticle>();
             int mapiteration = 0;
@@ -139,7 +139,7 @@ class ElectronTriggerList implements TriggerCandidateList {
     }
 }
 
-class PositronTriggerList implements TriggerCandidateList {
+class PositronTriggerList implements TriggerCandidateList {//Compiles a map of DetectorParticles, which could possibly be positrons
     public HashMap<Integer,DetectorParticle>  getCandidates(DetectorEvent event) {
         HashMap<Integer,DetectorParticle> map = new HashMap<Integer,DetectorParticle>();
             int mapiteration = 0;
