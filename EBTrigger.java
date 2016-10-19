@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.jlab.service.eb;
+package org.jlab.clas.ebuilder;
 
 import static java.lang.Math.abs;
 import java.util.ArrayList;
@@ -15,37 +15,40 @@ import static java.lang.Math.abs;
 
 /**
  *
- * @author Joseph Newton
+ * @author jnewt018
  */
 public class EBTrigger {
         
-       public static void GetFinalTriggerInformation(DetectorEvent event)   {
+    public static void GetFinalTriggerInformation(DetectorEvent event) {
            
-           for(int i = 0 ; i < event.getParticles().size() ; i++) {
-               TIDResult result = new TIDResult();
-               result = EBTrigger.GetShoweringParticleEvidence(event.getParticles().get(i));
-               event.getParticles().get(i).setTIDResult(result);
-           }
-     
-           for(int i = 0 ; i < event.getEventTrigger().getUserTriggerIDs().size() ; i++) {
-               HashMap<Integer,DetectorParticle> TriggerCandidates = new HashMap<Integer,DetectorParticle>();
-               
-               TriggerCandidates = event.ObtainTriggerCandidates(event.getEventTrigger().getUserTriggerIDs().get(i));
- 
-               if(abs(event.getEventTrigger().getUserTriggerIDs().get(i))==11 && TriggerCandidates.size()>0){//Positrons or Electrons
-                   TriggerElectron te = new TriggerElectron();
-                   te.collectBestTriggerInfo(event, TriggerCandidates);//sets trigger info including the start time
-                   break;
-               }
-               
-               if(abs(event.getEventTrigger().getUserTriggerIDs().get(i))==211 && TriggerCandidates.size()>0){//Positive or Negative Pions
-                   TriggerPion tpi = new TriggerPion();
-                   tpi.collectBestTriggerInfo(event, TriggerCandidates);//sets trigger info including the start time
-                   break;
-               }
-               
-            }
+        for(int i = 0 ; i < event.getParticles().size() ; i++) {
+            TIDResult result = new TIDResult();
+            result = EBTrigger.GetShoweringParticleEvidence(event.getParticles().get(i)); //How much does it resemble electron/positron?
+            event.getParticles().get(i).setScore(result.getScore());//"score" is recorded for each DetectorParticle
         }
+     
+        ElectronTriggerList electron = new ElectronTriggerList();
+        HashMap<Integer,DetectorParticle> ElectronCandidates = electron.getCandidates(event);//Possible Candidates for Electrons
+        event.getEventTrigger().setElectronCandidates(ElectronCandidates);
+            
+        PositronTriggerList positron = new PositronTriggerList();
+        HashMap<Integer,DetectorParticle> PositronCandidates = positron.getCandidates(event);//Possible Candidates for Positrons
+        event.getEventTrigger().setPositronCandidates(PositronCandidates);
+            
+        boolean TriggerExists = false;
+        if(ElectronCandidates.size()>0 && TriggerExists==false){
+           TriggerElectron Te = new TriggerElectron();
+           Te.CollectBestTriggerInfo(event); //calculate start time and obtain other relevant trigger information based off "best" electron
+           TriggerExists = true;
+        }
+            
+        if(PositronCandidates.size()>0 && TriggerExists==false){
+            TriggerPositron Teplus = new TriggerPositron();
+            Teplus.CollectBestTriggerInfo(event); //calculate start time and obtain other relevant trigger information based off "best" positron
+        }
+            
+            
+    }
 
        
      
@@ -87,7 +90,7 @@ public class EBTrigger {
                 
            
         return Result;
-            }
+      }
     
         
 }
@@ -95,25 +98,58 @@ public class EBTrigger {
 
 class TriggerElectron implements BestTrigger {
     
-    public void collectBestTriggerInfo(DetectorEvent event, HashMap<Integer,DetectorParticle> triggercandidates){
-                   EventTrigger TriggerInfo = new EventTrigger();
-                   DetectorParticle BestTrigger = TriggerInfo.GetBestTriggerParticle(triggercandidates);
-                   TriggerInfo = event.getEventTrigger();
-                   TriggerInfo.setTriggerParticle(BestTrigger);
-                   TriggerInfo.setStartTime(BestTrigger.StartTime(11));
-                   TriggerInfo.setzt(BestTrigger.vertex().z());
+    public void CollectBestTriggerInfo(DetectorEvent event){
+                   EventTrigger Trigger = new EventTrigger();
+                   Trigger = event.getEventTrigger();
+                   DetectorParticle BestTrigger = Trigger.GetBestTriggerParticle(Trigger.getElectronCandidates());
+                   Trigger.setTriggerParticle(BestTrigger);
+                   Trigger.setStartTime(Trigger.StartTime(BestTrigger,11));
+                   Trigger.setzt(BestTrigger.vertex().z());
                    
     }
 }
 
-  class TriggerPion implements BestTrigger { 
-      public void collectBestTriggerInfo(DetectorEvent event, HashMap<Integer,DetectorParticle> triggercandidates){
-                   EventTrigger TriggerInfo = new EventTrigger();
-                   DetectorParticle BestTrigger = TriggerInfo.GetFastestTrack(triggercandidates);
-                   TriggerInfo = event.getEventTrigger();
-                   TriggerInfo.setTriggerParticle(BestTrigger);
-                   TriggerInfo.setStartTime(BestTrigger.StartTime(211));
-                   TriggerInfo.setzt(BestTrigger.vertex().z());
-          
+class TriggerPositron implements BestTrigger {
+    
+    public void CollectBestTriggerInfo(DetectorEvent event){
+                   EventTrigger Trigger = new EventTrigger();
+                   Trigger = event.getEventTrigger();
+                   DetectorParticle BestTrigger = Trigger.GetBestTriggerParticle(Trigger.getPositronCandidates());
+                   Trigger.setTriggerParticle(BestTrigger);
+                   Trigger.setStartTime(Trigger.StartTime(BestTrigger,11));
+                   Trigger.setzt(BestTrigger.vertex().z());
+                   
+    }
+}
+
+
+
+class ElectronTriggerList implements TriggerCandidateList {
+    public HashMap<Integer,DetectorParticle>  getCandidates(DetectorEvent event) {
+        HashMap<Integer,DetectorParticle> map = new HashMap<Integer,DetectorParticle>();
+            int mapiteration = 0;
+            for(int i = 0 ; i < event.getParticles().size() ; i++){
+                if(event.getParticles().get(i).getCharge()==-1 && event.getParticles().get(i).getNphe("htcc")>0
+                        && event.getParticles().get(i).hasHit(DetectorType.FTOF, 2)){
+                    map.put(mapiteration,event.getParticles().get(i));
+                    mapiteration = mapiteration + 1;
+                }
+            }
+        return map;
+    }
+}
+
+class PositronTriggerList implements TriggerCandidateList {
+    public HashMap<Integer,DetectorParticle>  getCandidates(DetectorEvent event) {
+        HashMap<Integer,DetectorParticle> map = new HashMap<Integer,DetectorParticle>();
+            int mapiteration = 0;
+            for(int i = 0 ; i < event.getParticles().size() ; i++){
+                if(event.getParticles().get(i).getCharge()==1 && event.getParticles().get(i).getNphe("htcc")>0
+                        && event.getParticles().get(i).hasHit(DetectorType.FTOF, 2)){
+                    map.put(mapiteration,event.getParticles().get(i));
+                    mapiteration = mapiteration + 1;
+                }
+            }
+        return map;
     }
 }
