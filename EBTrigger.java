@@ -65,6 +65,7 @@ public class EBTrigger {
         if(PositronCandidates.size()>0 && TriggerExists==false){
             TriggerPositron Teplus = new TriggerPositron();
             Teplus.CollectBestTriggerInfo(event); //calculate start time and obtain other relevant trigger information based off "best" positron
+            TriggerExists = true;
         }
 
         if(NegativePionCandidates.size()>0 && TriggerExists==false){
