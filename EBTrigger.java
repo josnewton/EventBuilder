@@ -1,4 +1,4 @@
-package org.jlab.rec.service.eb;
+package org.jlab.service.eb;
 
 import static java.lang.Math.abs;
 import java.util.ArrayList;
