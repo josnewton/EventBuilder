@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.jlab.service.eb;
+package org.jlab.clas.ebuilder;
 
+import java.io.PrintWriter;
+import static java.lang.Math.abs;
 import java.util.ArrayList;
 import java.util.List;
 import org.jlab.clas.reco.ReconstructionEngine;
@@ -24,20 +26,19 @@ public class EBEngine extends ReconstructionEngine {
         super("EB","gavalian","1.0");
     }
     
-    @Override
     public boolean processDataEvent(DataEvent de) {
         
         int eventType = EBio.TRACKS_HB;
         
-//        if(EBio.isTimeBased(de)==true){
-//            eventType = EBio.TRACKS_TB;
-//        }
+        if(EBio.isTimeBased(de)==true){
+            eventType = EBio.TRACKS_TB;
+        }
         
         DetectorEvent  detectorEvent = new DetectorEvent();
         
         List<DetectorParticle>  chargedParticles = EBio.readTracks(de, eventType);
-        List<DetectorResponse>  ftofResponse     = EBio.readFTOF(de);
-        List<DetectorResponse>  ecalResponse     = EBio.readECAL(de);
+        List<org.jlab.clas.detector.DetectorResponse>  ftofResponse     = EBio.readFTOF(de);
+        List<org.jlab.clas.detector.DetectorResponse>  ecalResponse     = EBio.readECAL(de);
         List<CherenkovSignal> htccSignal = EBio.readHTCC(de);
 
         
@@ -51,28 +52,31 @@ public class EBEngine extends ReconstructionEngine {
         processor.matchHTCC();
         processor.matchNeutral();
         
-        for(int i = 0 ; i < chargedParticles.size() ; i++){  //Organize all particles into detectorEvent
+        for(int i = 0 ; i < chargedParticles.size() ; i++){ 
             detectorEvent.addParticle(chargedParticles.get(i));
-            //System.out.println(chargedParticles.get(i).getNphe("htcc"));
         }
 
       
         EventTrigger trigger = new EventTrigger();  
-        
-        List<Integer> usertriggerids= new ArrayList<Integer>();//User can request trigger
-        usertriggerids.add(0,11); 
-        
-        trigger.setUserTriggerIDs(usertriggerids);
         detectorEvent.setEventTrigger(trigger);
         
-        EBTrigger.GetFinalTriggerInformation(detectorEvent); //Identifies Trigger Particle and Start Time
-        EBTrigger.CalcBeta(detectorEvent);//Calculates Speed of Each Track
+        EBTrigger triggerinfo = new EBTrigger();
+        triggerinfo.setEvent(detectorEvent);
+        triggerinfo.setDataEvent(de);
         
+        triggerinfo.InitialTriggerInformation();
+        triggerinfo.FinalTriggerInformation();
+        triggerinfo.CalcBetas(); 
 
-        if(EBio.isTimeBased(de)==true){
-           EBPID.doTimeBasedPID(detectorEvent);
-        }
         
+        EBPID pid = new EBPID();
+        if(EBio.isTimeBased(de)==true){
+           pid.setEvent(detectorEvent);
+           pid.DoTimeBasedPID();
+           pid.CoincidenceChecks();
+              }
+       
+
         /*
         if(de.hasBank("RUN::config")==true){
             EvioDataBank bankHeader = (EvioDataBank) de.getBank("RUN::config");
@@ -84,8 +88,8 @@ public class EBEngine extends ReconstructionEngine {
         for(org.jlab.clas.ebuilder.DetectorParticle p : chargedParticles){
             System.out.println(p);
         }*/
-        EvioDataBank pBank = (EvioDataBank) EBio.writeTraks(processor.getParticles(), eventType);
-        de.appendBanks(pBank);
+//        EvioDataBank pBank = (EvioDataBank) EBio.writeTraks(processor.getParticles(), eventType);
+ //       de.appendBanks(pBank);
         
         return true;
     }
@@ -95,5 +99,7 @@ public class EBEngine extends ReconstructionEngine {
         System.out.println("[EB::] --> event builder is ready....");
         return true;
     }
+
+
     
 }
