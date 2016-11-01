@@ -1,4 +1,4 @@
-package org.jlab.clas.ebuilder;
+package org.jlab.rec.service.eb;
 
 import static java.lang.Math.abs;
 import java.util.ArrayList;
@@ -78,7 +78,7 @@ public class EBTrigger {
      
     public void CalcBeta2(DetectorParticle p){ //Maybe you can modify this so that speed of track can be calculated by any detector based off availabilitiy
         if(p.hasHit(DetectorType.FTOF, 2)==true){
-            org.jlab.clas.detector.DetectorResponse res = p.getHit(DetectorType.FTOF, 2);
+            DetectorResponse res = p.getHit(DetectorType.FTOF, 2);
             double path = res.getPath();
             double time = res.getTime();
           //  double beta = path/(time-e.getEventTrigger().getStartTime())/29.9792;
