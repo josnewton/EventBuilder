@@ -15,17 +15,18 @@ import org.jlab.detector.base.DetectorType;
 
 /**
  *
- * @author jnewton
+ * @author gavalian
  */
 public class EventTrigger {
     
  private double zt=0.0;
  private double rftime=0.0;
  private double starttime=0.0;
+ private double vertextime=0.0;
  private DetectorParticle triggerparticle = new DetectorParticle();
  private HashMap<Integer,DetectorParticle> ElectronCandidates = new HashMap<Integer,DetectorParticle>();
  private HashMap<Integer,DetectorParticle> PositronCandidates = new HashMap<Integer,DetectorParticle>();
-
+ private HashMap<Integer,DetectorParticle> NegativePionCandidates = new HashMap<Integer,DetectorParticle>();
 
     
     public EventTrigger(){
@@ -33,12 +34,13 @@ public class EventTrigger {
     }
     
     public void   setzt(double z_t){ this.zt = z_t;}
-    public void   setRFTime(float rf){this.rftime = rf;}
+    public void   setRFTime(double rf){this.rftime = rf;}
+    public void   setVertexTime(double t){this.vertextime = t;}
     public void   setStartTime(double start){this.starttime = start;}
     public void   setTriggerParticle(DetectorParticle particle){this.triggerparticle=particle;}
     public void   setElectronCandidates(HashMap<Integer,DetectorParticle> ecandidates){this.ElectronCandidates = ecandidates;}
     public void   setPositronCandidates(HashMap<Integer,DetectorParticle> epluscandidates){this.PositronCandidates = epluscandidates;}
-
+    public void   setNegativePionCandidates(HashMap<Integer,DetectorParticle> piminus){this.NegativePionCandidates = piminus;}
 
 
     public DetectorParticle GetBestTriggerParticle(HashMap<Integer,DetectorParticle> TriggerCandidates) {
@@ -107,11 +109,13 @@ public class EventTrigger {
             return MaximumIndex;
         }
     
-       public double StartTime(DetectorParticle particle, int usertriggerid){
-            double t_0r = 0;
-
+       public double VertexTime(DetectorParticle particle, int usertriggerid) {
+            double t_0r = 0.0;
+            
             if(particle.hasHit(DetectorType.FTOF, 2)==true){
+           
             double beta = 0.0;
+            
             if(abs(usertriggerid)==11){
                 beta = 1;//We assign electron beta if at least one track has responses in FTOF/HTCC
             }
@@ -122,24 +126,54 @@ public class EventTrigger {
                 beta = particle.getTheoryBeta(22);
             }
 
-            double t_0 = 0,deltatr = 0, t_rf = 0, z_0 = 0, m = 1000000;
-            t_0r = particle.getTime(DetectorType.FTOF) - (particle.getPathLength(DetectorType.FTOF))/(beta*29.9792);
-            deltatr = t_0r - t_rf - (particle.vertex().z() - z_0)/beta + m*2.0004;
-            t_0 = deltatr%2.0004 - 2.0004/2;
+            
+            t_0r = particle.getTime(DetectorType.FTOF) - (particle.getPathLength(DetectorType.FTOF))/(29.9792*beta);//vertex time
 
             }
    
       
             return t_0r;
-        }
+       }
     
+       public double StartTime(DetectorParticle particle, int usertriggerid) {
+
+            double deltatr = this.getVertexTime() - this.getRFTime() - (this.getZt() - (-4.5))/(29.9792) + 800*2.0004+1.002;
+            
+            double t_0corr = deltatr%2.0004 - 2.0004/2;//RF correction term
+            
+            double t_0 = this.getVertexTime() + t_0corr;//RF-Corrected Start Time
+            
+            return t_0;
+            }
+   
+
     public double getZt(){ return this.zt;}
     public double getRFTime(){ return this.rftime; }
+    public double getVertexTime(){return this.vertextime;}
     public double getStartTime(){ return this.starttime;}
     public DetectorParticle getTriggerParticle(){return this.triggerparticle;}
     public HashMap<Integer,DetectorParticle> getElectronCandidates(){return this.ElectronCandidates;}
     public HashMap<Integer,DetectorParticle> getPositronCandidates(){return this.PositronCandidates;}
+    public HashMap<Integer,DetectorParticle> getNegativePionCandidates(){return this.NegativePionCandidates;}
 
-    
+    @Override
+	public String toString(){
+        StringBuilder str = new StringBuilder();
+        str.append(String.format("\t [RF Time/Start Time/Vertex Time/Vertex Position] [%8f %3f %3f %3f] ", 
+				 this.rftime,
+				 this.starttime,
+				 this.vertextime,
+				 this.zt
+				 ));
+
+        return str.toString();
+    }
+        
+    public void Print(){
+            System.out.println("RF Time = " + this.rftime);
+            System.out.println("Event Start Time = " + this.starttime);
+            System.out.println("Trigger Vertex Time" + this.vertextime);
+            System.out.println("Z Position of Vertex = " + this.zt);
+    }
 
 }
