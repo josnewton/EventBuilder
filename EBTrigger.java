@@ -1,5 +1,5 @@
 
-package org.jlab.clas.ebuilder;
+package org.jlab.service.eb;
 
 import static java.lang.Math.abs;
 import java.util.ArrayList;
