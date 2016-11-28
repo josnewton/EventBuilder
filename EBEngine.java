@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.jlab.clas.ebuilder;
+package org.jlab.service.eb;
 
 import java.io.PrintWriter;
 import static java.lang.Math.abs;
@@ -18,7 +18,7 @@ import org.jlab.io.evio.EvioDataBank;
 
 /**
  *
- * @author jnewton
+ * @author gavalian
  */
 public class EBEngine extends ReconstructionEngine {
     
@@ -34,7 +34,6 @@ public class EBEngine extends ReconstructionEngine {
             eventType = EBio.TRACKS_TB;
         }
         
-        DetectorEvent  detectorEvent = new DetectorEvent();
         
         List<DetectorParticle>  chargedParticles = EBio.readTracks(de, eventType);
         List<DetectorResponse>  ftofResponse     = EBio.readFTOF(de);
@@ -49,6 +48,8 @@ public class EBEngine extends ReconstructionEngine {
         processor.matchCalorimeter();
         processor.matchNeutral();
         
+        DetectorEvent  detectorEvent = new DetectorEvent();
+        
         for(int i = 0 ; i < chargedParticles.size() ; i++){ 
             detectorEvent.addParticle(chargedParticles.get(i));
         }
@@ -61,18 +62,26 @@ public class EBEngine extends ReconstructionEngine {
         triggerinfo.setEvent(detectorEvent);
         triggerinfo.setDataEvent(de);
         
-        triggerinfo.InitialTriggerInformation();
-        triggerinfo.FinalTriggerInformation();
-        triggerinfo.CalcBetas(); 
-
+        triggerinfo.RFInformation(); //Obtain RF Time
+        triggerinfo.Trigger();//Use Trigger Particle Vertex Time and RF Time for Start Time
+        triggerinfo.CalcBetas(); //Calculate Speeds and Masses of Particles
+       
+        //System.out.println(detectorEvent.getEventTrigger());
+        
         
         EBPID pid = new EBPID();
         if(EBio.isTimeBased(de)==true){
            pid.setEvent(detectorEvent);
-           pid.DoTimeBasedPID();
-           pid.CoincidenceChecks();
+           pid.DoTimeBasedPID();//PID Assignment
               }
-       
+        
+
+        
+        for(int i = 0 ; i < detectorEvent.getParticles().size(); i++){
+           System.out.println("Particle ID " + detectorEvent.getParticles().get(i).getPid());
+        }
+
+        
 
         /*
         if(de.hasBank("RUN::config")==true){
