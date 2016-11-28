@@ -12,6 +12,12 @@ import static java.lang.Math.pow;
 import org.jlab.detector.base.DetectorType;
 import org.jlab.io.base.DataEvent;
 
+
+
+
+
+
+
 /**
  *
  * @author Joseph Newton
@@ -30,61 +36,29 @@ public class EBPID {
     
     public void DoTimeBasedPID() {
           PIDAssignment();
-          CoincidenceChecks();
     }
 
     public void PIDAssignment() {
 
         for(int i = 0; i < event.getParticles().size(); i++){ 
-                boolean haveID = false;
                 TBElectron electron = new TBElectron();
-                if(abs(electron.getPIDResult(event.getParticles().get(i)).getFinalID())==11 && haveID==false){ //Is it electron or positron?
-                    event.getParticles().get(i).setPid(electron.getPIDResult(event.getParticles().get(i)).getFinalID());
-                    haveID = true;
-                }
                 TBPion pion = new TBPion();
-                if(abs(pion.getPIDResult(event.getParticles().get(i)).getFinalID())==211 && haveID==false){ //Is it a charged pion?
-                    event.getParticles().get(i).setPid(pion.getPIDResult(event.getParticles().get(i)).getFinalID());
-                    haveID = true;
-                }
                 TBKaon kaon = new TBKaon();
-                if(abs(kaon.getPIDResult(event.getParticles().get(i)).getFinalID())==321 && haveID==false){ //Is it a charged kaon?
-                    event.getParticles().get(i).setPid(kaon.getPIDResult(event.getParticles().get(i)).getFinalID());
-                    haveID = true;
-                }
                 TBProton proton = new TBProton();
-                if(abs(proton.getPIDResult(event.getParticles().get(i)).getFinalID())==2212 && haveID==false){  //Is it a proton or antiproton?
-                    event.getParticles().get(i).setPid(proton.getPIDResult(event.getParticles().get(i)).getFinalID());
-                    haveID = true;
-                }
+                
+                int eid, piid, kid, prid;
+                
+                eid = electron.getPIDResult(event.getParticles().get(i)).getFinalID(); //Is it an electron/positron?
+                piid = pion.getPIDResult(event.getParticles().get(i)).getFinalID();//Is it a charged pion?
+                kid = kaon.getPIDResult(event.getParticles().get(i)).getFinalID();//Is it a charged kaon?
+                prid = proton.getPIDResult(event.getParticles().get(i)).getFinalID();//Is it a proton/anti-proton?
+                
+                event.getParticles().get(i).setPid(eid + piid + kid + prid); //Only one value will be non-zero
                 
             }   
         }
     
-    public void CoincidenceChecks() {
-         HashMap<Integer,Double> ECTimingCheck = new HashMap<Integer,Double>();//Integer is Layer # for the Specified Detector
-         HashMap<Integer,Double> FTOFTimingCheck = new HashMap<Integer,Double>();
-         double t_0 = event.getEventTrigger().getStartTime();
-            
-            for(int i = 0 ; i < event.getParticles().size() ; i++) {
-                DetectorParticle p = event.getParticles().get(i);
-                
-                ECTimingCheck.put(1,p.getVertexTime(DetectorType.EC,1));//PCAL Time Check
-                ECTimingCheck.put(4,p.getVertexTime(DetectorType.EC,4));//ECINNER Time Check
-                ECTimingCheck.put(7,p.getVertexTime(DetectorType.EC,7));//ECOUTER Time Check
-                FTOFTimingCheck.put(2,p.getVertexTime(DetectorType.EC,2));//FTOF1B Time Check
-                FTOFTimingCheck.put(3,p.getVertexTime(DetectorType.EC,3));//FTOF Panel 2 Time Check
-                
-                double chisquared = pow((ECTimingCheck.get(1)-t_0),2)/t_0 + pow((ECTimingCheck.get(4)-t_0),2)/t_0 +
-                pow((ECTimingCheck.get(7)-t_0),2)/t_0 + pow((FTOFTimingCheck.get(2)-t_0),2)/t_0 + 
-                pow((FTOFTimingCheck.get(3)-t_0),2)/t_0;
-                
-                p.getPIDResult().setECTimingCheck(ECTimingCheck);
-                p.getPIDResult().setFTOFTimingCheck(FTOFTimingCheck);
-                p.getPIDResult().setTimingQuality(chisquared);
-            }
-            
-        }
+
     
     
 
