@@ -1,4 +1,5 @@
-package org.jlab.service.eb;
+
+package org.jlab.clas.ebuilder;
 
 import static java.lang.Math.abs;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class EBTrigger {
     public void setEvent(DetectorEvent e){this.event = e;}
     public void setDataEvent(DataEvent data){this.de = data;}
     
-    public void InitialTriggerInformation() {
+    public void RFInformation() {
       
           if(de.hasBank("RF::info")==true){
             EvioDataBank bank = (EvioDataBank) de.getBank("RF::info");
@@ -35,7 +36,7 @@ public class EBTrigger {
     }
             
         
-    public void FinalTriggerInformation() {
+    public void Trigger() {
             
         for(int i = 0 ; i < this.event.getParticles().size() ; i++) {
             TIDResult result = new TIDResult();
@@ -47,38 +48,28 @@ public class EBTrigger {
         PositronTriggerList positron = new PositronTriggerList();
         NegativePionTriggerList negativepion = new NegativePionTriggerList();
         
-        HashMap<Integer,DetectorParticle> ElectronCandidates = electron.getCandidates(event);//Possible Candidates for Electrons
-        HashMap<Integer,DetectorParticle> PositronCandidates = positron.getCandidates(event);//Possible Candidates for Positrons
-        HashMap<Integer,DetectorParticle> NegativePionCandidates = negativepion.getCandidates(event);//Possible Candidates for Negative Pions
-        
-        event.getEventTrigger().setElectronCandidates(ElectronCandidates);
-        event.getEventTrigger().setPositronCandidates(PositronCandidates);
-        event.getEventTrigger().setNegativePionCandidates(NegativePionCandidates);
-            
-        boolean TriggerExists = false;
-        if(ElectronCandidates.size()>0 && TriggerExists==false){
-           TriggerElectron Te = new TriggerElectron();
-           Te.CollectBestTriggerInfo(event); //calculate start time and obtain other relevant trigger information based off "best" electron
-           TriggerExists = true;
-        }
-            
-        if(PositronCandidates.size()>0 && TriggerExists==false){
-            TriggerPositron Teplus = new TriggerPositron();
-            Teplus.CollectBestTriggerInfo(event); //calculate start time and obtain other relevant trigger information based off "best" positron
-            TriggerExists = true;
-        }
+        event.getEventTrigger().setElectronCandidates(electron.getCandidates(event));
+        event.getEventTrigger().setPositronCandidates(positron.getCandidates(event));
+        event.getEventTrigger().setNegativePionCandidates(negativepion.getCandidates(event));
+     
+            switch(event.getEventTrigger().TriggerScenario()) { //Case 1 means electrons were found, Case 2 means positrons were found, Case 3 means negative pions were found
+                case 1:
+                TriggerElectron telectron = new TriggerElectron();
+                telectron.CollectBestTriggerInformation(event); 
+                case 2:
+                TriggerPositron tpositron = new TriggerPositron();
+                tpositron.CollectBestTriggerInformation(event);
+                case 3:
+                TriggerNegativePion tnegativepion = new TriggerNegativePion();
+                tnegativepion.CollectBestTriggerInformation(event);
+              }
 
-        if(NegativePionCandidates.size()>0 && TriggerExists==false){
-            TriggerNegativePion Piminus = new TriggerNegativePion();
-            Piminus.CollectBestTriggerInfo(event); //calculate start time and obtain other relevant trigger information based off "best" pi minus
-        }
-            
-    }
+      }
        
      
     public void CalcBeta2(DetectorParticle p){ //Maybe you can modify this so that speed of track can be calculated by any detector based off availabilitiy
         if(p.hasHit(DetectorType.FTOF, 2)==true){
-            DetectorResponse res = p.getHit(DetectorType.FTOF, 2);
+            org.jlab.clas.detector.DetectorResponse res = p.getHit(DetectorType.FTOF, 2);
             double path = res.getPath();
             double time = res.getTime();
           //  double beta = path/(time-e.getEventTrigger().getStartTime())/29.9792;
@@ -125,7 +116,7 @@ public class EBTrigger {
 
 class TriggerElectron implements BestTrigger {
     
-    public void CollectBestTriggerInfo(DetectorEvent event){
+    public void CollectBestTriggerInformation(DetectorEvent event){
                    EventTrigger Trigger = new EventTrigger();
                    Trigger = event.getEventTrigger();
                    DetectorParticle BestTrigger = Trigger.GetBestTriggerParticle(Trigger.getElectronCandidates());
@@ -139,7 +130,7 @@ class TriggerElectron implements BestTrigger {
 
 class TriggerPositron implements BestTrigger {
     
-    public void CollectBestTriggerInfo(DetectorEvent event){
+    public void CollectBestTriggerInformation(DetectorEvent event){
                    EventTrigger Trigger = new EventTrigger();
                    Trigger = event.getEventTrigger();
                    DetectorParticle BestTrigger = Trigger.GetBestTriggerParticle(Trigger.getPositronCandidates());
@@ -153,7 +144,7 @@ class TriggerPositron implements BestTrigger {
 
 class TriggerNegativePion implements BestTrigger {
     
-    public void CollectBestTriggerInfo(DetectorEvent event){
+    public void CollectBestTriggerInformation(DetectorEvent event){
                    EventTrigger Trigger = new EventTrigger();
                    Trigger = event.getEventTrigger();
                    DetectorParticle BestTrigger = Trigger.GetBestTriggerParticle(Trigger.getNegativePionCandidates());
