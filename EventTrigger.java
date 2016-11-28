@@ -1,4 +1,4 @@
-package org.jlab.clas.ebuilder;
+package org.jlab.service.eb;
 
 import static java.lang.Math.abs;
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ public class EventTrigger {
  private double rftime=0.0;
  private double starttime=0.0;
  private double vertextime=0.0;
+
  private DetectorParticle triggerparticle = new DetectorParticle();
  private HashMap<Integer,DetectorParticle> ElectronCandidates = new HashMap<Integer,DetectorParticle>();
  private HashMap<Integer,DetectorParticle> PositronCandidates = new HashMap<Integer,DetectorParticle>();
@@ -145,7 +146,26 @@ public class EventTrigger {
             
             return t_0;
             }
-   
+       
+public int TriggerScenario() {
+    int i = 0;
+    for(int j = 1 ; j <= 3 ; j++){
+        if(ElectronCandidates.size()>0){
+            i = 1;
+            break;
+          }
+        if(PositronCandidates.size()>0){
+            i = 2;
+            break;
+        }
+        if(NegativePionCandidates.size()>0){
+            i = 3;
+            break;
+        }
+       }
+    
+      return i;
+    }
 
     public double getZt(){ return this.zt;}
     public double getRFTime(){ return this.rftime; }
@@ -155,6 +175,7 @@ public class EventTrigger {
     public HashMap<Integer,DetectorParticle> getElectronCandidates(){return this.ElectronCandidates;}
     public HashMap<Integer,DetectorParticle> getPositronCandidates(){return this.PositronCandidates;}
     public HashMap<Integer,DetectorParticle> getNegativePionCandidates(){return this.NegativePionCandidates;}
+
 
     @Override
 	public String toString(){
