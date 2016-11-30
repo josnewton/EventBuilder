@@ -36,16 +36,19 @@ public class EBEngine extends ReconstructionEngine {
         
         
         List<DetectorParticle>  chargedParticles = EBio.readTracks(de, eventType);
-        List<DetectorResponse>  ftofResponse     = EBio.readFTOF(de);
-        List<DetectorResponse>  ecalResponse     = EBio.readECAL(de);
+        List<org.jlab.clas.detector.DetectorResponse>  ftofResponse     = EBio.readFTOF(de);
+        List<org.jlab.clas.detector.DetectorResponse>  ecalResponse     = EBio.readECAL(de);
+        List<CherenkovSignal> htccSignal = EBio.readHTCC(de);
 
         
         EBProcessor processor = new EBProcessor(chargedParticles);
         processor.addTOF(ftofResponse);
         processor.addECAL(ecalResponse);
+        processor.addHTCC(htccSignal);
         
         processor.matchTimeOfFlight();
         processor.matchCalorimeter();
+        processor.matchHTCC();
         processor.matchNeutral();
         
         DetectorEvent  detectorEvent = new DetectorEvent();
@@ -72,7 +75,7 @@ public class EBEngine extends ReconstructionEngine {
         EBPID pid = new EBPID();
         if(EBio.isTimeBased(de)==true){
            pid.setEvent(detectorEvent);
-           pid.DoTimeBasedPID();//PID Assignment
+           pid.PIDAssignment();//PID Assignment
               }
         
 
