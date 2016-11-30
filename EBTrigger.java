@@ -51,17 +51,23 @@ public class EBTrigger {
         event.getEventTrigger().setElectronCandidates(electron.getCandidates(event));
         event.getEventTrigger().setPositronCandidates(positron.getCandidates(event));
         event.getEventTrigger().setNegativePionCandidates(negativepion.getCandidates(event));
-     
+        //System.out.println(event.getEventTrigger().TriggerScenario());
             switch(event.getEventTrigger().TriggerScenario()) { //Case 1 means electrons were found, Case 2 means positrons were found, Case 3 means negative pions were found
+                case 0:
+                System.out.println("No Trigger Found");
+                break;
                 case 1:
                 TriggerElectron telectron = new TriggerElectron();
                 telectron.CollectBestTriggerInformation(event); 
+                break;
                 case 2:
                 TriggerPositron tpositron = new TriggerPositron();
                 tpositron.CollectBestTriggerInformation(event);
+                break;
                 case 3:
                 TriggerNegativePion tnegativepion = new TriggerNegativePion();
                 tnegativepion.CollectBestTriggerInformation(event);
+                break;
               }
 
       }
