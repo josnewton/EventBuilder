@@ -1,4 +1,4 @@
-package org.jlab.service.eb;
+package org.jlab.clas.ebuilder;
 
 import static java.lang.Math.abs;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import org.jlab.detector.base.DetectorType;
 
 /**
  *
- * @author jnewton
+ * @author gavalian
  */
 public class EventTrigger {
     
@@ -149,19 +149,25 @@ public class EventTrigger {
        
 public int TriggerScenario() {
     int i = 0;
-    for(int j = 1 ; j <= 3 ; j++){
-        if(ElectronCandidates.size()>0){
+    int j = 1;
+    boolean stop = false;
+    while(stop!=true){
+        if(j==1 && ElectronCandidates.size()>0){
             i = 1;
-            break;
+            stop = true;
           }
-        if(PositronCandidates.size()>0){
+        if(j==2 && PositronCandidates.size()>0){
             i = 2;
-            break;
+            stop = true;
         }
-        if(NegativePionCandidates.size()>0){
+        if(j==3 && NegativePionCandidates.size()>0){
             i = 3;
-            break;
+            stop = true;
         }
+        if(j==4){
+            stop = true;
+        }
+        j=j+1;
        }
     
       return i;
