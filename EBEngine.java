@@ -36,19 +36,18 @@ public class EBEngine extends ReconstructionEngine {
         
         
         List<DetectorParticle>  chargedParticles = EBio.readTracks(de, eventType);
-        List<org.jlab.clas.detector.DetectorResponse>  ftofResponse     = EBio.readFTOF(de);
-        List<org.jlab.clas.detector.DetectorResponse>  ecalResponse     = EBio.readECAL(de);
-        List<CherenkovSignal> htccSignal = EBio.readHTCC(de);
+        List<DetectorResponse>  ftofResponse     = EBio.readFTOF(de);
+        List<DetectorResponse>  ecalResponse     = EBio.readECAL(de);
+
 
         
         EBProcessor processor = new EBProcessor(chargedParticles);
         processor.addTOF(ftofResponse);
         processor.addECAL(ecalResponse);
-        processor.addHTCC(htccSignal);
+
         
         processor.matchTimeOfFlight();
         processor.matchCalorimeter();
-        processor.matchHTCC();
         processor.matchNeutral();
         
         DetectorEvent  detectorEvent = new DetectorEvent();
