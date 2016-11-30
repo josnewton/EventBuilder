@@ -1,5 +1,5 @@
 
-package org.jlab.service.eb;
+package org.jlab.service.e;
 
 import static java.lang.Math.abs;
 import java.util.ArrayList;
