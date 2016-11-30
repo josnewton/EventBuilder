@@ -89,31 +89,6 @@ public class DetectorEvent {
 
 
     
-    public boolean hasElectron(){
-        boolean x = false;
-        int i = 0;
-        while(i < particleList.size()){
-            if(particleList.get(i).getPid()==11){
-                x = true;
-                break;
-            }
-        }
-        return x;
-    }
-    
-    public DetectorParticle getElectron() {
-        DetectorParticle part = new DetectorParticle();
-        int i = 0;
-           while(i < particleList.size()){
-            if(particleList.get(i).getPid()==11){
-                part = particleList.get(i); 
-                break;
-            }
-        }
-        
-        return part;
-    }
-    
     @Override
 	public String toString(){
         StringBuilder str = new StringBuilder();
