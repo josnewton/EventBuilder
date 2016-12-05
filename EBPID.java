@@ -41,7 +41,7 @@ public class EBPID {
         for(int i = 0; i < event.getParticles().size(); i++) { 
                 Particleid(event.getParticles().get(i)); //Assigns PID
                 TimingChecks(event.getParticles().get(i)); //Checks timing and removes hits that fail
-                if(event.getParticles().get(i).getParticleTimeCheck()==false) {
+                if(event.getParticles().get(i).getParticleTimeCheck()!=true) {
                     Particleid(event.getParticles().get(i));
                  }
             }   
@@ -210,12 +210,14 @@ class ECTiming implements ParticleTiming {
             particle.getHit(type, layer).setEnergy(0.0);
             particle.setParticleTimeCheck(false);
         }
-        else{
+        if(abs(delta)<2){
             particle.setParticleTimeCheck(true);
         }
     }
+        if(particle.hasHit(type,layer)==false){
+            particle.setParticleTimeCheck(true);
+        }
     }
 }
-
 
 
