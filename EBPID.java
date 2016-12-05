@@ -38,10 +38,12 @@ public class EBPID {
     
     public void PIDAssignment() {
 
-        for(int i = 0; i < event.getParticles().size(); i++){ 
+        for(int i = 0; i < event.getParticles().size(); i++) { 
                 Particleid(event.getParticles().get(i)); //Assigns PID
                 TimingChecks(event.getParticles().get(i)); //Checks timing and removes hits that fail
-                Particleid(event.getParticles().get(i));//Assigns PID again with correct timing
+                if(event.getParticles().get(i).getParticleTimeCheck()==false) {
+                    Particleid(event.getParticles().get(i));
+                 }
             }   
         }
     
@@ -66,7 +68,7 @@ public class EBPID {
                 ectime.CoincidenceCheck(event, particle, DetectorType.EC, 0);
                 ectime.CoincidenceCheck(event,particle,DetectorType.EC,1);
                 ectime.CoincidenceCheck(event,particle,DetectorType.EC,2);
-
+                
                 
         }
     
@@ -202,11 +204,18 @@ class TBProton implements ParticleID {
 
 class ECTiming implements ParticleTiming {
     public void CoincidenceCheck(DetectorEvent event, DetectorParticle particle, DetectorType type, int layer){
+        if(particle.hasHit(type,layer)==true){
         double delta = particle.getVertexTime(type,layer) - event.getEventTrigger().getStartTime();
         if(abs(delta)>2){
             particle.getHit(type, layer).setEnergy(0.0);
+            particle.setParticleTimeCheck(false);
+        }
+        else{
+            particle.setParticleTimeCheck(true);
         }
     }
+    }
 }
+
 
 
