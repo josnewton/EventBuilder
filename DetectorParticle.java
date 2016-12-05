@@ -47,7 +47,7 @@ public class DetectorParticle {
     
 
     
-    private List<org.jlab.clas.detector.DetectorResponse>  responseStore = new ArrayList<org.jlab.clas.detector.DetectorResponse>();
+    private List<DetectorResponse>  responseStore = new ArrayList<DetectorResponse>();
     private List<CherenkovSignal> cherenkovStore = new ArrayList<CherenkovSignal>();
     
     private TreeMap<DetectorType,TrackIntersect>  projectedHit = new  TreeMap<DetectorType,TrackIntersect>();
@@ -65,7 +65,7 @@ public class DetectorParticle {
         this.responseStore.clear();
     }
     
-    public void addResponse(org.jlab.clas.detector.DetectorResponse res, boolean match){
+    public void addResponse(DetectorResponse res, boolean match){
         if(match==false){
             this.responseStore.add(res);
         }
@@ -94,7 +94,7 @@ public class DetectorParticle {
         return this.vector().compare(new Vector3(x,y,z));
     }
     
-    public void addResponse(org.jlab.clas.detector.DetectorResponse res){
+    public void addResponse(DetectorResponse res){
         /*
         double distance = Math.sqrt(
                 (this.particleCrossPosition.x()-res.getPosition().x())*
@@ -304,17 +304,14 @@ public class DetectorParticle {
         for(DetectorResponse r : this.responseStore){
 
             if(r.getDescriptor().getType()==type){
-             // System.out.println("heloooooooo");
                 energy += r.getEnergy();
-              // System.out.println("sum" + energy);
             }
         }
         /*
         DetectorResponse response = this.getHit(type);
         if(response==null) return -1.0;
         return response.getEnergy();*/
-       //
-      // System.out.println("getenergy" + energy);
+
         return energy;
     }
     
