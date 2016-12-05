@@ -38,6 +38,7 @@ public class DetectorParticle {
     private Integer particlePID     = 0;
     private Integer particleStatus  = 1;
     private Integer particleScore   = 0;
+    private Boolean particleTiming = null;
     private Double  particleBeta    = 0.0;
     private Double  particleMass    = 0.0;
     private Double  particlePath    = 0.0;
@@ -46,7 +47,8 @@ public class DetectorParticle {
     
 
     
-    private List<DetectorResponse>  responseStore = new ArrayList<DetectorResponse>();
+    private List<org.jlab.clas.detector.DetectorResponse>  responseStore = new ArrayList<org.jlab.clas.detector.DetectorResponse>();
+    private List<CherenkovSignal> cherenkovStore = new ArrayList<CherenkovSignal>();
     
     private TreeMap<DetectorType,TrackIntersect>  projectedHit = new  TreeMap<DetectorType,TrackIntersect>();
     
@@ -63,13 +65,17 @@ public class DetectorParticle {
         this.responseStore.clear();
     }
     
-    public void addResponse(DetectorResponse res, boolean match){
+    public void addResponse(org.jlab.clas.detector.DetectorResponse res, boolean match){
         if(match==false){
             this.responseStore.add(res);
         }
     }
     
-
+    public void addSignal(CherenkovSignal che) {
+      
+            this.cherenkovStore.add(che);
+       
+    }
     
     
     public Particle getPhysicsParticle(int pid){
@@ -88,7 +94,7 @@ public class DetectorParticle {
         return this.vector().compare(new Vector3(x,y,z));
     }
     
-    public void addResponse(DetectorResponse res){
+    public void addResponse(org.jlab.clas.detector.DetectorResponse res){
         /*
         double distance = Math.sqrt(
                 (this.particleCrossPosition.x()-res.getPosition().x())*
@@ -121,6 +127,10 @@ public class DetectorParticle {
         this.responseStore.add(res);*/
         this.responseStore.add(res);
     }
+    
+    public boolean getParticleTimeCheck(){
+            return this.particleTiming;
+            }
     
     public double CalculatedSF() {
                 //System.out.println(this.getEnergy(DetectorType.EC)/this.vector().mag());
@@ -180,7 +190,10 @@ public class DetectorParticle {
     public List<DetectorResponse>  getDetectorResponses(){
         return this.responseStore;
     }
-
+    
+    public List<CherenkovSignal>  getCherenkovSignals(){
+        return this.cherenkovStore;
+    }
     
     public DetectorResponse getHit(DetectorType type){
         for(DetectorResponse res : this.responseStore){
@@ -293,7 +306,7 @@ public class DetectorParticle {
             if(r.getDescriptor().getType()==type){
              // System.out.println("heloooooooo");
                 energy += r.getEnergy();
-               // System.out.println(energy);
+              // System.out.println("sum" + energy);
             }
         }
         /*
@@ -301,11 +314,19 @@ public class DetectorParticle {
         if(response==null) return -1.0;
         return response.getEnergy();*/
        //
-      // System.out.println(energy);
+      // System.out.println("getenergy" + energy);
         return energy;
     }
     
-
+    public int getNphe(String che){
+       int nphe = 0;
+            for(CherenkovSignal c : this.cherenkovStore){
+            if(c.getSignalType()==che){
+                nphe = c.getNphe();
+            }
+        }
+             return nphe;
+    }
     
     public double getBeta(DetectorType type){
         DetectorResponse response = this.getHit(type);
@@ -350,6 +371,10 @@ public class DetectorParticle {
         this.particleScore = sc;
     }
     
+    public void setParticleTimeCheck(boolean x) {
+        this.particleTiming = x;
+    }
+    
     public int getScore(){
         return this.particleScore;
     }
@@ -362,7 +387,7 @@ public class DetectorParticle {
         return this.pidresult;
     }
     
-    public int getDetectorHit(List<DetectorResponse>  hitList, DetectorType type,
+    public int getDetectorHit(List<org.jlab.clas.detector.DetectorResponse>  hitList, DetectorType type,
 			      int detectorLayer,
 			      double distanceThreshold){
         
@@ -380,7 +405,7 @@ public class DetectorParticle {
         int      bestIndex       = -1;
         for(int loop = 0; loop < hitList.size(); loop++){
             //for(DetectorResponse response : hitList){
-            DetectorResponse response = hitList.get(loop);
+            org.jlab.clas.detector.DetectorResponse response = hitList.get(loop);
             if(response.getDescriptor().getType()==type&&
 	       response.getDescriptor().getLayer()==detectorLayer){
      
@@ -403,7 +428,34 @@ public class DetectorParticle {
         return bestIndex;
     }
     
-
+        public int getCherenkovSignal(List<CherenkovSignal>  signalList, String type,
+			      double thetaThreshold){
+        
+        Line3D   trajectory = new Line3D(
+					 this.particleVertex.x(),
+					 this.particleVertex.y(),
+					 this.particleVertex.z(),
+					 this.particleMomenta.x()*1500.0,
+					 this.particleMomenta.y()*1500.0,
+					 this.particleMomenta.z()*1500.0
+					 );
+        
+        double  signalDtheta;
+        double   minimumDistance = 500.0;
+        int      bestIndex       = -1;
+        for(int loop = 0; loop < signalList.size(); loop++){
+            //for(DetectorResponse response : hitList){
+            CherenkovSignal signal = signalList.get(loop);
+            if(signal.getSignalType()==type){
+                signalDtheta = signal.getTheta() - this.particleVertex.theta();
+                if(signalDtheta<thetaThreshold&&signalDtheta<minimumDistance){
+                    minimumDistance = signalDtheta;
+                    bestIndex       = loop;
+                }
+            }
+        }
+        return bestIndex;
+    } 
     
     /**
      * returns DetectorResponse that matches closely with the trajectory
